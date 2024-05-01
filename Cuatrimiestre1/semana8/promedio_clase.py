@@ -1,7 +1,38 @@
-# programa determina promedio de notas ponderado de estudiante y definitivo de la clase
+"""
+# Programa determina promedio de notas ponderado de estudiante y definitivo de la clase
 # fecha: 01/05/2024 (día/mes/año)
 # autor: Stiven Vera Cano
 # Licencia: GPL GNU
+"""
+
+
+def manejador_opcion_usuario(opcion_usuario):
+    """
+    Ejecuta acción en base a ingreso de usuario
+
+    Parameters:
+    opcion_usuario (int): opción del usuario
+
+    Returns:
+    None
+    """
+    if opcion_usuario == 1:
+
+        mostrar_estudiante_por_id()
+
+    elif opcion_usuario == 2:
+        mostrar_promedio_y_nombre_todos_los_estudiantes()
+
+    elif opcion_usuario == 3:
+        print(
+            f"\nEl promedio de la clase es de {devolver_promedio_total_clase()}")
+
+    elif opcion_usuario == 0:
+        print("saliendo....")
+
+    else:
+        print("La opción ingresada es inválida")
+
 
 def mostrar_promedio_y_nombre_todos_los_estudiantes():
     """
@@ -52,6 +83,37 @@ def devolver_promedio_total_clase():
     return sumatoria_notas/(len(estudiantes))
 
 
+def registrar_estudiantes(total_estudiantes):
+    """
+    Registra estudiantes en lista estudiantes
+
+    Parameters:
+    total_estudiantes (int): total de estudiantes a registrar
+
+    Returns:
+    None
+    """
+    for estudiante in range(1, total_estudiantes+1):
+
+        print(f"\nDatos del estudiante #{estudiante} \n")
+        nombre = validar_entrada_sea_str("Ingrese el nombre del estudiante ")
+
+        nota_uno = validar_formato_nota(
+            retornar_mensaje_solicitar_nota(1, 30))
+
+        nota_dos = validar_formato_nota(
+            retornar_mensaje_solicitar_nota(2, 30))
+
+        nota_tres = validar_formato_nota(
+            retornar_mensaje_solicitar_nota(3, 40))
+
+        promedio_estudiante = calcular_nota_promedio_ponderada_estudiante(
+            nota_uno, nota_dos, nota_tres)
+
+        insertar_estudiante(
+            nombre, nota_uno, nota_dos, nota_tres, promedio_estudiante)
+
+
 def validar_formato_nota(mensaje):
     """
     Valida y solicita nota hasta que sea sea válida => decimal y entre 0 y 5
@@ -64,18 +126,21 @@ def validar_formato_nota(mensaje):
     """
     nota = None
     es_nota_invalida = True
+    es_primera_vez = True
 
     while es_nota_invalida:
         try:
-            entrada = input(f"{mensaje} ")
+            entrada = input(
+                f"{mensaje} " if es_primera_vez else "Por favor ingrese la nota ")
+            es_primera_vez = False
             nota = float(entrada)
             if not validar_si_rango_nota_es_valido(nota):
-                print("El valor debe estar entre 0.0 y 5.0")
+                print("\nEl valor debe estar entre 0.0 y 5.0")
             else:
                 es_nota_invalida = False
         except ValueError:
             print(
-                "Debes ingresar un valor numérico entero o decimal (ej: entero: 4, decimal: 4.3).")
+                "\nDebes ingresar un valor numérico entero o decimal (ej: ent: 4, dec: 4.3).")
     return nota
 
 
@@ -139,7 +204,7 @@ def mostrar_estudiante_por_id():
             print("\n")
             break
     if estudiante_encontrado == "":
-        print(f"No se encontró un estudiante con el id {id_estudiante}")
+        print(f"\nNo se encontró un estudiante con el id {id_estudiante}")
 
 
 def mostrar_estudiantes_retornando_id_estudiante():
@@ -183,7 +248,7 @@ def validar_numero_estudiantes_sea_valido(mensaje):
         if numero_estudiantes > 0:
             es_valor_invalido = False
         else:
-            print("Valor inválido. El valor debe ser igual o mayor que 1")
+            print("\nValor inválido. El valor debe ser igual o mayor que 1")
     return numero_estudiantes
 
 
@@ -207,7 +272,7 @@ def validar_entrada_sea_int(mensaje):
             valor = int(valor)
             es_valor_invalido = False
         except ValueError:
-            print("El dato ingresado no es un número entero \n")
+            print("\nEl dato ingresado no es un número entero ")
 
     return valor
 
@@ -231,7 +296,7 @@ def validar_entrada_sea_str(mensaje):
         try:
             cadena = input(f"{mensaje} ")
             float(cadena)
-            print("Debes ingresar una cadena de texto. (ej: Luis)")
+            print("\nDebes ingresar una cadena de texto. (ej: Luis)")
         except ValueError:
             es_str_invalida = False
 
@@ -251,9 +316,8 @@ def imprimir_mensaje_de_bienvenida():
     print("""
 \nBienvenido
 En este programa podrás registrar las notas de los estudiantes de una clase
-print("Además, sacar el promedio ponderado en base a 3 notas de cada estudiante
+Además, sacar el promedio ponderado en base a 3 notas de cada estudiante
 y el promedio total de la clase
-
 """)
 
 
@@ -279,19 +343,18 @@ Elige alguna de las opciones:
 """)
 
 
-def imprimir_mensaje_solicitar_nota(num_nota, valor_porcentual):
+def retornar_mensaje_solicitar_nota(num_nota, valor_porcentual):
     """
-    Imprime mensaje para solicitar nota de estudiante 
+    Imprime mensaje para solicitar nota de estudiante
 
     Parameters:
     num_nota (int): número de nota
     valor_porcentual (int): valor que vale la nota en %
 
     Returns:
-    None
     """
-    print(f"""Ingrese el valor de la nota {num_nota}.
-           Rango de 0 a 5, se admiten decimales. vale el {valor_porcentual}%""")
+    return f"""\nIngrese el valor de la nota {num_nota}
+El rango debe estar entre 0 a 5, puede ser decimal, vale el {valor_porcentual}%"""
 
 
 # Variable para almacenar los diccionarios de estudiantes
@@ -317,52 +380,17 @@ def correr_programa():
         if es_primera_vez:
             imprimir_mensaje_de_bienvenida()
             total_estudiantes = validar_numero_estudiantes_sea_valido(
-                "\nPor favor ingrese el número total de estudiantes ")
+                "Por favor ingrese el número total de estudiantes ")
 
-            for estudiante in range(1, total_estudiantes+1):
-
-                print(f"\nDatos del estudiante #{estudiante} \n")
-                nombre = validar_entrada_sea_str(
-                    "Ingrese el nombre del estudiante ")
-
-                nota_uno = validar_formato_nota(
-                    imprimir_mensaje_solicitar_nota(1, 30))
-
-                nota_dos = validar_formato_nota(
-                    imprimir_mensaje_solicitar_nota(2, 30))
-
-                nota_tres = validar_formato_nota(
-                    imprimir_mensaje_solicitar_nota(3, 40))
-
-                promedio_estudiante = calcular_nota_promedio_ponderada_estudiante(
-                    nota_uno, nota_dos, nota_tres)
-
-                insertar_estudiante(
-                    nombre, nota_uno, nota_dos, nota_tres, promedio_estudiante)
-
+            registrar_estudiantes(total_estudiantes)
             print("\nSe ha registrado correctamente a todos los estudiantes")
+
             es_primera_vez = False
         else:
             input("\nPresiona la tecla enter para continuar ")
             imprimir_menu_principal()
             opcion_usuario = validar_entrada_sea_int("\ningrese una opción \n")
-
-            if opcion_usuario == 1:
-
-                mostrar_estudiante_por_id()
-
-            elif opcion_usuario == 2:
-                mostrar_promedio_y_nombre_todos_los_estudiantes()
-
-            elif opcion_usuario == 3:
-                print(
-                    f"\nEl promedio de la clase es de {devolver_promedio_total_clase()}")
-
-            elif opcion_usuario == 0:
-                print("saliendo....")
-
-            else:
-                print("La opción ingresada es inválida")
+            manejador_opcion_usuario(opcion_usuario)
 
 
 correr_programa()
