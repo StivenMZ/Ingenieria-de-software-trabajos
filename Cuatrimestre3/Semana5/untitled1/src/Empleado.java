@@ -57,5 +57,14 @@ public class Empleado {
     }
 
 
+    @Override
+    public String toString() {
+        return "ID: " + id + ", Nombre: " + nombre + ", Apellido: " + apellido +
+                ", Género: " + genero + ", Salario: " + salario;
+    }
 
+
+    public void mostrarInfo() {
+        System.out.println(this);
+    }
 }
